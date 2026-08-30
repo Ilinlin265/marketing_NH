@@ -14,7 +14,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
+st.image("logo.jpg")
 
 # =========================================================
 # CSS - GIAO DIỆN SANG TRỌNG
