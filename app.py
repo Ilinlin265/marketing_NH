@@ -80,22 +80,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ----------------------------------------------------
-# 2. KHỞI TẠO STATE (DỮ LIỆU BAN ĐẦU HOÀN TOÀN TRỐNG)
-# ----------------------------------------------------
-if 'is_admin' not in st.session_state:
-    st.session_state.is_admin = False
-
-if 'customer_df' not in st.session_state:
-    # Khởi tạo DataFrame trống hoàn toàn, chỉ tạo cấu trúc cột
-    columns = [
-        "Họ và Tên", "Số Điện Thoại", "Gói Vay", "Số Tiền Vay (Triệu VNĐ)",
-        "Thời Hạn (Tháng)", "Lãi Suất (%/năm)", "Thu Nhập Hàng Tháng (Triệu)",
-        "Tỷ Lệ DTI (%)", "Nhóm Chiến Lược", "Trạng Thái", "Ngày Đăng Ký"
-    ]
-    st.session_state.customer_df = pd.DataFrame(columns=columns)
-
-# ----------------------------------------------------
-# 3. HÀM TỰ ĐỘNG PHÂN LOẠI NHÓM CHIẾN LƯỢC
+# 2. HÀM TỰ ĐỘNG PHÂN LOẠI NHÓM CHIẾN LƯỢC
 # ----------------------------------------------------
 def classify_strategic_group(income, loan_amount, dti):
     if income >= 60 and loan_amount >= 2000:
@@ -110,7 +95,65 @@ def classify_strategic_group(income, loan_amount, dti):
         return "🌱 Phổ Thông Khai Thác"
 
 # ----------------------------------------------------
-# 4. SIDEBAR
+# 3. HÀM TẠO DANH SÁCH 13 KHÁCH HÀNG MẪU NGẪU NHIÊN
+# ----------------------------------------------------
+def generate_13_sample_customers():
+    raw_samples = [
+        ("Phan Văn Huy", "0909963128", "Vay mua nhà", 2500, 180, 7.5, 65),
+        ("Lê Xuân Hoàng", "0909345124", "Vay mua nhà", 1800, 120, 7.2, 45),
+        ("Nguyễn Thị Mai", "0901729782", "Vay mua nhà", 3200, 240, 7.0, 80),
+        ("Nguyễn Nhật Minh", "0938760015", "Vay SXKD cá thể", 1200, 60, 8.0, 50),
+        ("Vũ Duy Hải", "0932662479", "Vay mua ô tô", 800, 84, 7.8, 35),
+        ("Phạm Quốc Bảo", "0903112233", "Vay tiêu dùng tín chấp", 150, 36, 10.5, 25),
+        ("Đỗ Thùy Trang", "0918445566", "Vay mua nhà", 4500, 240, 6.8, 110),
+        ("Hoàng Văn Nam", "0977889900", "Vay SXKD cá thể", 900, 48, 8.2, 30),
+        ("Trần Thanh Tuấn", "0902334455", "Vay mua ô tô", 650, 60, 7.5, 28),
+        ("Bùi Thị Ngọc", "0988112233", "Vay tiêu dùng tín chấp", 200, 24, 11.0, 22),
+        ("Ngô Quang Vinh", "0933557799", "Vay mua nhà", 2100, 180, 7.2, 55),
+        ("Đặng Minh Trí", "0908223344", "Vay SXKD cá thể", 1500, 60, 7.9, 40),
+        ("Đinh Thị Hương", "0919667788", "Vay mua nhà", 1000, 120, 7.5, 32)
+    ]
+    
+    data = []
+    for name, phone, loan_type, amount, tenure, rate, income in raw_samples:
+        monthly_rate = (rate / 100) / 12
+        principal = amount / tenure
+        interest = amount * monthly_rate
+        first_month_total = principal + interest
+        dti = (first_month_total / income) * 100 if income > 0 else 0
+        strat = classify_strategic_group(income, amount, dti)
+        
+        data.append({
+            "Họ và Tên": name,
+            "Số Điện Thoại": phone,
+            "Gói Vay": loan_type,
+            "Số Tiền Vay (Triệu VNĐ)": amount,
+            "Thời Hạn (Tháng)": tenure,
+            "Lãi Suất (%/năm)": rate,
+            "Thu Nhập Hàng Tháng (Triệu)": income,
+            "Tỷ Lệ DTI (%)": round(dti, 1),
+            "Nhóm Chiến Lược": strat,
+            "Trạng Thái": "Đang thẩm định",
+            "Ngày Đăng Ký": date.today().strftime("%Y-%m-%d")
+        })
+    return pd.DataFrame(data)
+
+# ----------------------------------------------------
+# 4. KHỞI TẠO STATE
+# ----------------------------------------------------
+if 'is_admin' not in st.session_state:
+    st.session_state.is_admin = False
+
+if 'customer_df' not in st.session_state:
+    columns = [
+        "Họ và Tên", "Số Điện Thoại", "Gói Vay", "Số Tiền Vay (Triệu VNĐ)",
+        "Thời Hạn (Tháng)", "Lãi Suất (%/năm)", "Thu Nhập Hàng Tháng (Triệu)",
+        "Tỷ Lệ DTI (%)", "Nhóm Chiến Lược", "Trạng Thái", "Ngày Đăng Ký"
+    ]
+    st.session_state.customer_df = pd.DataFrame(columns=columns)
+
+# ----------------------------------------------------
+# 5. SIDEBAR
 # ----------------------------------------------------
 with st.sidebar:
     try:
@@ -130,6 +173,18 @@ with st.sidebar:
         ]
     )
     
+    st.markdown("---")
+    st.markdown("##### ⚡ Thao Tác Nhanh Dữ Liệu")
+    if st.button("🎲 Tạo 13 Hồ Sơ Mẫu Ngẫu Nhiên", use_container_width=True):
+        st.session_state.customer_df = generate_13_sample_customers()
+        st.success("✅ Đã nạp thành công 13 hồ sơ khách hàng mẫu!")
+        st.rerun()
+
+    if st.button("🗑️ Xóa Sạch Dữ Liệu", use_container_width=True):
+        st.session_state.customer_df = pd.DataFrame(columns=st.session_state.customer_df.columns)
+        st.success("✅ Đã xóa sạch danh sách khách hàng!")
+        st.rerun()
+
     st.markdown("---")
     st.caption("🟢 Hệ thống quản trị gói vay cá nhân VCB")
     st.caption("© Ngân hàng TMCP Ngoại thương Việt Nam")
@@ -195,7 +250,7 @@ if menu == "📊 Dashboard Tổng Quan":
             package_counts.columns = ["Gói Vay", "Số Lượng"]
             st.bar_chart(package_counts, x="Gói Vay", y="Số Lượng", color="#005A36")
         else:
-            st.info("💡 Chưa có dữ liệu khách hàng. Vui lòng thêm hồ sơ mới ở mục 'Tính Vay & Đăng Ký Hồ Sơ'.")
+            st.info("💡 Chưa có dữ liệu khách hàng. Bấm nút **'🎲 Tạo 13 Hồ Sơ Mẫu Ngẫu Nhiên'** ở cột bên trái để nạp dữ liệu xem thử.")
 
     with c2:
         st.markdown("##### 🎯 Cơ Cấu Nhóm Chiến Lược")
@@ -384,11 +439,11 @@ elif menu == "🔒 Cổng Quản Trị Viên (Admin)":
             if filter_status != "Tất cả":
                 df = df[df["Trạng Thái"] == filter_status]
             
-            # Hiển thị bảng dữ liệu đầy đủ SĐT không bị che
+            # Hiển thị bảng dữ liệu đầy đủ SĐT
             st.dataframe(df, use_container_width=True, hide_index=True)
             st.caption(f"Hiển thị {len(df)} trên tổng số {len(st.session_state.customer_df)} hồ sơ khách hàng.")
         else:
-            st.info("💡 Chưa có dữ liệu khách hàng nào trong hệ thống. Hãy sang mục **'🧮 Tính Vay & Đăng Ký Hồ Sơ'** để nhập hồ sơ mới.")
+            st.info("💡 Chưa có dữ liệu khách hàng. Bạn có thể bấm nút **'🎲 Tạo 13 Hồ Sơ Mẫu Ngẫu Nhiên'** ở thanh bên trái để tạo nhanh dữ liệu thử nghiệm.")
 
         st.markdown("---")
         st.markdown("##### 🛠️ Thao Tác Xuất File & Quản Lý Hồ Sơ")
