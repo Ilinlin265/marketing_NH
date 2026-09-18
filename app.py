@@ -76,51 +76,17 @@ st.markdown("""
     .badge-potential { background-color: #E0E7FF; color: #3730A3; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
     .badge-standard { background-color: #D1FAE5; color: #065F46; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
     .badge-risk { background-color: #FEE2E2; color: #991B1B; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-    
-    .security-notice {
-        background-color: #EFF6FF;
-        border: 1px solid #BFDBFE;
-        color: #1E40AF;
-        padding: 12px 16px;
-        border-radius: 8px;
-        font-size: 13px;
-        margin-bottom: 15px;
-    }
     </style>
 """, unsafe_allow_html=True)
 
 # ----------------------------------------------------
-# 2. HÀM BẢO MẬT & CHE MỜ DỮ LIỆU CÁ NHÂN (DATA MASKING)
-# ----------------------------------------------------
-def mask_phone(phone_str):
-    """Che mờ Số điện thoại: 0912345678 -> 091*****78"""
-    phone_str = str(phone_str).strip()
-    if len(phone_str) >= 10:
-        return phone_str[:3] + "*****" + phone_str[-2:]
-    elif len(phone_str) >= 6:
-        return phone_str[:2] + "*****" + phone_str[-2:]
-    return "09xxxxx"
-
-def mask_name(name_str):
-    """Che mờ Họ tên: Nguyễn Văn A -> Nguyễn V*** A"""
-    parts = str(name_str).strip().split()
-    if len(parts) > 2:
-        masked_middle = [p[0] + "*" * (len(p) - 1) if len(p) > 1 else "*" for p in parts[1:-1]]
-        return f"{parts[0]} {' '.join(masked_middle)} {parts[-1]}"
-    elif len(parts) == 2:
-        return f"{parts[0]} {parts[1][0]}***"
-    return name_str[0] + "***" if name_str else "Khách hàng"
-
-# ----------------------------------------------------
-# 3. KHỞI TẠO STATE
+# 2. KHỞI TẠO STATE (DỮ LIỆU BAN ĐẦU HOÀN TOÀN TRỐNG)
 # ----------------------------------------------------
 if 'is_admin' not in st.session_state:
     st.session_state.is_admin = False
 
-if 'show_full_pii' not in st.session_state:
-    st.session_state.show_full_pii = False
-
 if 'customer_df' not in st.session_state:
+    # Khởi tạo DataFrame trống hoàn toàn, chỉ tạo cấu trúc cột
     columns = [
         "Họ và Tên", "Số Điện Thoại", "Gói Vay", "Số Tiền Vay (Triệu VNĐ)",
         "Thời Hạn (Tháng)", "Lãi Suất (%/năm)", "Thu Nhập Hàng Tháng (Triệu)",
@@ -129,7 +95,7 @@ if 'customer_df' not in st.session_state:
     st.session_state.customer_df = pd.DataFrame(columns=columns)
 
 # ----------------------------------------------------
-# 4. HÀM TỰ ĐỘNG PHÂN LOẠI NHÓM CHIẾN LƯỢC
+# 3. HÀM TỰ ĐỘNG PHÂN LOẠI NHÓM CHIẾN LƯỢC
 # ----------------------------------------------------
 def classify_strategic_group(income, loan_amount, dti):
     if income >= 60 and loan_amount >= 2000:
@@ -144,7 +110,7 @@ def classify_strategic_group(income, loan_amount, dti):
         return "🌱 Phổ Thông Khai Thác"
 
 # ----------------------------------------------------
-# 5. SIDEBAR
+# 4. SIDEBAR
 # ----------------------------------------------------
 with st.sidebar:
     try:
@@ -165,7 +131,7 @@ with st.sidebar:
     )
     
     st.markdown("---")
-    st.caption("🔒 Hệ thống bảo mật thông tin theo NĐ 13/2023/NĐ-CP")
+    st.caption("🟢 Hệ thống quản trị gói vay cá nhân VCB")
     st.caption("© Ngân hàng TMCP Ngoại thương Việt Nam")
 
 # ----------------------------------------------------
@@ -229,7 +195,7 @@ if menu == "📊 Dashboard Tổng Quan":
             package_counts.columns = ["Gói Vay", "Số Lượng"]
             st.bar_chart(package_counts, x="Gói Vay", y="Số Lượng", color="#005A36")
         else:
-            st.info("💡 Chưa có dữ liệu khách hàng nào trong hệ thống.")
+            st.info("💡 Chưa có dữ liệu khách hàng. Vui lòng thêm hồ sơ mới ở mục 'Tính Vay & Đăng Ký Hồ Sơ'.")
 
     with c2:
         st.markdown("##### 🎯 Cơ Cấu Nhóm Chiến Lược")
@@ -246,18 +212,12 @@ if menu == "📊 Dashboard Tổng Quan":
 elif menu == "🧮 Tính Vay & Đăng Ký Hồ Sơ":
     st.subheader("🧮 Công Cụ Tính Gói Vay & Tạo Hồ Sơ Khách Hàng")
     
-    st.markdown("""
-        <div class="security-notice">
-            🔒 <b>Cam kết bảo mật dữ liệu:</b> Thông tin cá nhân (Họ tên, SĐT) nhập vào đây được mã hóa và che mờ tự động để đảm bảo an toàn thông tin theo Nghị định 13/2023/NĐ-CP.
-        </div>
-    """, unsafe_allow_html=True)
-    
     col_input, col_result = st.columns([1, 1])
     
     with col_input:
-        st.markdown("##### 📝 Thông tin khoản vay")
-        fullname = st.text_input("Họ và tên khách hàng", value="", placeholder="Ví dụ: Nguyễn Văn A")
-        phone = st.text_input("Số điện thoại", value="", placeholder="Ví dụ: 0912345678")
+        st.markdown("##### 📝 Nhập thông tin khách hàng & khoản vay")
+        fullname = st.text_input("Họ và tên khách hàng", value="", placeholder="Nhập họ và tên...")
+        phone = st.text_input("Số điện thoại", value="", placeholder="Nhập số điện thoại (VD: 0912345678)...")
         loan_type = st.selectbox("Chọn gói vay Vietcombank", [
             "Vay mua nhà",
             "Vay mua ô tô",
@@ -269,8 +229,6 @@ elif menu == "🧮 Tính Vay & Đăng Ký Hồ Sơ":
         tenure_months = st.number_input("Thời hạn vay (Tháng)", min_value=6, max_value=360, value=120, step=6)
         interest_rate = st.number_input("Lãi suất ưu đãi (%/năm)", min_value=1.0, max_value=20.0, value=7.2, step=0.1)
         income = st.number_input("Thu nhập hàng tháng (Triệu VNĐ)", min_value=5, max_value=500, value=35, step=5)
-
-        consent_privacy = st.checkbox("Khách hàng đã đồng ý điều khoản xử lý dữ liệu cá nhân theo quy định VCB.")
 
     monthly_rate = (interest_rate / 100) / 12
     principal_per_month = amount_mb / tenure_months
@@ -296,9 +254,7 @@ elif menu == "🧮 Tính Vay & Đăng Ký Hồ Sơ":
             
         if st.button("➕ Thêm Hồ Sơ Vào Danh Sách Khách Hàng", use_container_width=True):
             if not fullname.strip() or not phone.strip():
-                st.error("⚠️ Vui lòng nhập đầy đủ Họ tên và Số điện thoại khách hàng!")
-            elif not consent_privacy:
-                st.warning("⚠️ Vui lòng tích chọn xác nhận đồng ý điều khoản bảo mật dữ liệu cá nhân!")
+                st.error("⚠️ Vui lòng nhập đầy đủ **Họ và tên** và **Số điện thoại** khách hàng!")
             else:
                 new_row = {
                     "Họ và Tên": fullname.strip(),
@@ -314,7 +270,7 @@ elif menu == "🧮 Tính Vay & Đăng Ký Hồ Sơ":
                     "Ngày Đăng Ký": date.today().strftime("%Y-%m-%d")
                 }
                 st.session_state.customer_df = pd.concat([st.session_state.customer_df, pd.DataFrame([new_row])], ignore_index=True)
-                st.success(f"✅ Đã thêm hồ sơ an toàn cho khách hàng **{mask_name(fullname)}** (SĐT: {mask_phone(phone)})!")
+                st.success(f"✅ Đã thêm thành công hồ sơ khách hàng **{fullname}** (SĐT: {phone}) vào hệ thống!")
 
 # ----------------------------------------------------
 # MENU 3: NHÓM CHIẾN LƯỢC KHÁCH HÀNG
@@ -379,7 +335,7 @@ elif menu == "🔒 Cổng Quản Trị Viên (Admin)":
         
         col_m1, col_m2, col_m3 = st.columns([1, 2, 1])
         with col_m2:
-            st.info("💡 Vui lòng nhập mật khẩu quản trị để mở khóa danh sách và thao tác dữ liệu.")
+            st.info("💡 Vui lòng nhập mật khẩu quản trị để truy cập danh sách khách hàng đầy đủ.")
             input_pass = st.text_input("🔑 Mật khẩu Admin:", type="password", placeholder="Nhập mật khẩu...")
             
             if st.button("🔓 Đăng Nhập Quản Trị Viên", use_container_width=True):
@@ -393,102 +349,92 @@ elif menu == "🔒 Cổng Quản Trị Viên (Admin)":
     else:
         top_col1, top_col2 = st.columns([3, 1])
         with top_col1:
-            st.subheader("📑 Danh Sách Khách Hàng & Quyền Quản Trị Dữ Liệu")
+            st.subheader("📑 Cổng Quản Trị Danh Sách Khách Hàng (Hiển thị đầy đủ SĐT)")
         with top_col2:
             if st.button("🚪 Đăng Xuất Admin", use_container_width=True):
                 st.session_state.is_admin = False
-                st.session_state.show_full_pii = False
                 st.rerun()
 
         st.success("🟢 Phiên làm việc: **Quản Trị Viên VIETCOMBANK**")
 
-        # Nút chuyển đổi chế độ bảo mật hiển thị
-        st.session_state.show_full_pii = st.toggle(
-            "🔓 Giải mã & Hiển thị thông tin cá nhân đầy đủ (Họ tên & SĐT)", 
-            value=st.session_state.show_full_pii
-        )
-
         df = st.session_state.customer_df.copy()
-        
-        # Tạo bản sao hiển thị đã được Masking nếu chưa bật giải mã
-        display_df = df.copy()
-        if not display_df.empty and not st.session_state.show_full_pii:
-            display_df["Họ và Tên"] = display_df["Họ và Tên"].apply(mask_name)
-            display_df["Số Điện Thoại"] = display_df["Số Điện Thoại"].apply(mask_phone)
         
         # Bộ lọc dữ liệu
         st.markdown("##### 🔍 Bộ lọc tìm kiếm")
         f_col1, f_col2, f_col3 = st.columns(3)
         
         with f_col1:
-            search_kw = st.text_input("Tìm kiếm nhanh (Từ khóa)")
+            search_kw = st.text_input("Tìm kiếm theo Họ tên / Số điện thoại")
         with f_col2:
-            unique_strats = list(display_df["Nhóm Chiến Lược"].unique()) if not display_df.empty else []
+            unique_strats = list(df["Nhóm Chiến Lược"].unique()) if not df.empty else []
             filter_strat = st.selectbox("Lọc theo Nhóm Chiến Lược", ["Tất cả"] + unique_strats)
         with f_col3:
-            unique_status = list(display_df["Trạng Thái"].unique()) if not display_df.empty else []
+            unique_status = list(df["Trạng Thái"].unique()) if not df.empty else []
             filter_status = st.selectbox("Lọc theo Trạng Thái", ["Tất cả"] + unique_status)
             
-        # Áp dụng lọc
-        if not display_df.empty:
+        # Áp dụng bộ lọc
+        if not df.empty:
             if search_kw:
-                display_df = display_df[
-                    display_df["Họ và Tên"].str.contains(search_kw, case=False, na=False) | 
-                    display_df["Số Điện Thoại"].str.contains(search_kw, na=False)
+                df = df[
+                    df["Họ và Tên"].str.contains(search_kw, case=False, na=False) | 
+                    df["Số Điện Thoại"].str.contains(search_kw, na=False)
                 ]
             if filter_strat != "Tất cả":
-                display_df = display_df[display_df["Nhóm Chiến Lược"] == filter_strat]
+                df = df[df["Nhóm Chiến Lược"] == filter_strat]
             if filter_status != "Tất cả":
-                display_df = display_df[display_df["Trạng Thái"] == filter_status]
+                df = df[df["Trạng Thái"] == filter_status]
             
-        st.dataframe(display_df, use_container_width=True, hide_index=True)
-        st.caption(f"Hiển thị {len(display_df)} trên tổng số {len(st.session_state.customer_df)} hồ sơ.")
-        
+            # Hiển thị bảng dữ liệu đầy đủ SĐT không bị che
+            st.dataframe(df, use_container_width=True, hide_index=True)
+            st.caption(f"Hiển thị {len(df)} trên tổng số {len(st.session_state.customer_df)} hồ sơ khách hàng.")
+        else:
+            st.info("💡 Chưa có dữ liệu khách hàng nào trong hệ thống. Hãy sang mục **'🧮 Tính Vay & Đăng Ký Hồ Sơ'** để nhập hồ sơ mới.")
+
         st.markdown("---")
-        st.markdown("##### 🛠️ Thao Tác Xuất / Xóa Dữ Liệu Hồ Sơ")
+        st.markdown("##### 🛠️ Thao Tác Xuất File & Quản Lý Hồ Sơ")
         
         tab_action1, tab_action2 = st.columns(2)
         
         with tab_action1:
-            st.write("📥 **Tải danh sách hồ sơ (Đã che mờ bảo mật theo chế độ hiện tại):**")
+            st.write("📥 **Tải danh sách khách hàng đầy đủ thông tin (Excel / CSV):**")
             
             # Export Excel
             output_excel = io.BytesIO()
             with pd.ExcelWriter(output_excel, engine='openpyxl') as writer:
-                display_df.to_excel(writer, index=False, sheet_name='DS_KhachHang_VCB')
+                df.to_excel(writer, index=False, sheet_name='DS_KhachHang_VCB')
             excel_data = output_excel.getvalue()
             
             st.download_button(
-                label="📊 Tải danh sách Excel (.xlsx)",
+                label="📊 Tải file Excel đầy đủ (.xlsx)",
                 data=excel_data,
                 file_name=f"DS_KhachHang_Vay_VCB_{datetime.now().strftime('%Y%m%d')}.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 use_container_width=True,
-                disabled=display_df.empty
+                disabled=df.empty
             )
 
             # Export CSV
-            csv_data = display_df.to_csv(index=False, encoding='utf-8-sig')
+            csv_data = df.to_csv(index=False, encoding='utf-8-sig')
             st.download_button(
-                label="📄 Tải danh sách CSV (.csv)",
+                label="📄 Tải file CSV đầy đủ (.csv)",
                 data=csv_data,
                 file_name=f"DS_KhachHang_Vay_VCB_{datetime.now().strftime('%Y%m%d')}.csv",
                 mime="text/csv",
                 use_container_width=True,
-                disabled=display_df.empty
+                disabled=df.empty
             )
 
         with tab_action2:
-            st.write("🗑️ **Xóa hồ sơ khách hàng:**")
+            st.write("🗑️ **Xóa hồ sơ khách hàng khỏi hệ thống:**")
             if not st.session_state.customer_df.empty:
                 customer_names = st.session_state.customer_df["Họ và Tên"].tolist()
-                selected_cust = st.selectbox("Chọn hồ sơ cần loại bỏ:", customer_names)
+                selected_cust = st.selectbox("Chọn khách hàng cần xóa:", customer_names)
                 
                 if st.button("❌ Xác Nhận Xóa Hồ Sơ", use_container_width=True):
                     st.session_state.customer_df = st.session_state.customer_df[
                         st.session_state.customer_df["Họ và Tên"] != selected_cust
                     ].reset_index(drop=True)
-                    st.success(f"✅ Đã loại bỏ hồ sơ khách hàng khỏi hệ thống!")
+                    st.success(f"✅ Đã xóa thành công hồ sơ của khách hàng **{selected_cust}**!")
                     st.rerun()
             else:
-                st.info("Chưa có dữ liệu nào để xóa.")
+                st.info("Chưa có hồ sơ nào để xóa.")
