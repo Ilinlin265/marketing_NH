@@ -88,31 +88,31 @@ st.markdown("""
 if 'customer_df' not in st.session_state:
     sample_data = [
         {
-            "Mã KH": "VCB-1001", "Họ và Tên": "Nguyễn Văn An", "Số Điện Thoại": "0903123456",
+            "Họ và Tên": "Nguyễn Văn An", "Số Điện Thoại": "0903123456",
             "Gói Vay": "Vay mua nhà (An Cư)", "Số Tiền Vay (Triệu VNĐ)": 2500, "Thời Hạn (Tháng)": 240,
             "Lãi Suất (%/năm)": 6.8, "Thu Nhập Hàng Tháng (Triệu)": 65, "Tỷ Lệ DTI (%)": 38.5,
             "Nhóm Chiến Lược": "💎 VIP - Khách hàng Ưu tiên", "Trạng Thái": "Đã phê duyệt", "Ngày Đăng Ký": "2026-09-01"
         },
         {
-            "Mã KH": "VCB-1002", "Họ và Tên": "Trần Thị Bích", "Số Điện Thoại": "0918234567",
+            "Họ và Tên": "Trần Thị Bích", "Số Điện Thoại": "0918234567",
             "Gói Vay": "Vay mua ô tô", "Số Tiền Vay (Triệu VNĐ)": 600, "Thời Hạn (Tháng)": 60,
             "Lãi Suất (%/năm)": 7.5, "Thu Nhập Hàng Tháng (Triệu)": 35, "Tỷ Lệ DTI (%)": 42.0,
             "Nhóm Chiến Lược": "🌟 Tiềm Năng Tăng Trưởng", "Trạng Thái": "Đang thẩm định", "Ngày Đăng Ký": "2026-09-05"
         },
         {
-            "Mã KH": "VCB-1003", "Họ và Tên": "Lê Hoàng Cường", "Số Điện Thoại": "0989345678",
+            "Họ và Tên": "Lê Hoàng Cường", "Số Điện Thoại": "0989345678",
             "Gói Vay": "Vay tiêu dùng tín chấp", "Số Tiền Vay (Triệu VNĐ)": 150, "Thời Hạn (Tháng)": 36,
             "Lãi Suất (%/năm)": 10.5, "Thu Nhập Hàng Tháng (Triệu)": 22, "Tỷ Lệ DTI (%)": 32.1,
             "Nhóm Chiến Lược": "🌱 Phổ Thông Khai Thác", "Trạng Thái": "Đã phê duyệt", "Ngày Đăng Ký": "2026-09-10"
         },
         {
-            "Mã KH": "VCB-1004", "Họ và Tên": "Phạm Quốc Dũng", "Số Điện Thoại": "0977456789",
+            "Họ và Tên": "Phạm Quốc Dũng", "Số Điện Thoại": "0977456789",
             "Gói Vay": "Vay SXKD cá thể", "Số Tiền Vay (Triệu VNĐ)": 1200, "Thời Hạn (Tháng)": 84,
             "Lãi Suất (%/năm)": 8.0, "Thu Nhập Hàng Tháng (Triệu)": 40, "Tỷ Lệ DTI (%)": 58.2,
             "Nhóm Chiến Lược": "⚠️ Cần Tăng Cường Thẩm Định", "Trạng Thái": "Yêu cầu bổ sung HS", "Ngày Đăng Ký": "2026-09-12"
         },
         {
-            "Mã KH": "VCB-1005", "Họ và Tên": "Đặng Mai Phương", "Số Điện Thoại": "0934567890",
+            "Họ và Tên": "Đặng Mai Phương", "Số Điện Thoại": "0934567890",
             "Gói Vay": "Vay mua nhà (An Cư)", "Số Tiền Vay (Triệu VNĐ)": 4000, "Thời Hạn (Tháng)": 180,
             "Lãi Suất (%/năm)": 6.5, "Thu Nhập Hàng Tháng (Triệu)": 110, "Tỷ Lệ DTI (%)": 29.5,
             "Nhóm Chiến Lược": "💎 VIP - Khách hàng Ưu tiên", "Trạng Thái": "Đã phê duyệt", "Ngày Đăng Ký": "2026-09-15"
@@ -139,7 +139,6 @@ def classify_strategic_group(income, loan_amount, dti):
 # 4. SIDEBAR (LOGO & ĐIỀU HƯỚNG)
 # ----------------------------------------------------
 with st.sidebar:
-    # Đọc và hiển thị LOGO.JPG
     try:
         st.image("LOGO.JPG", use_container_width=True)
     except Exception:
@@ -275,9 +274,7 @@ elif menu == "🧮 Tính Vay & Đăng Ký Hồ Sơ":
             st.warning("⚠️ Cảnh báo: Tỷ lệ DTI vượt quá 50%. Cần xem xét thêm tài sản bảo đảm!")
             
         if st.button("➕ Thêm Hồ Sơ Vào Danh Sách Khách Hàng", use_container_width=True):
-            new_id = f"VCB-{1000 + len(st.session_state.customer_df) + 1}"
             new_row = {
-                "Mã KH": new_id,
                 "Họ và Tên": fullname,
                 "Số Điện Thoại": phone,
                 "Gói Vay": loan_type,
@@ -291,7 +288,7 @@ elif menu == "🧮 Tính Vay & Đăng Ký Hồ Sơ":
                 "Ngày Đăng Ký": date.today().strftime("%Y-%m-%d")
             }
             st.session_state.customer_df = pd.concat([st.session_state.customer_df, pd.DataFrame([new_row])], ignore_index=True)
-            st.success(f"✅ Đã thêm hồ sơ thành công! Mã KH: {new_id}")
+            st.success(f"✅ Đã thêm hồ sơ thành công cho khách hàng **{fullname}**!")
 
 # ----------------------------------------------------
 # MENU 3: NHÓM CHIẾN LƯỢC KHÁCH HÀNG
