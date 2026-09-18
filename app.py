@@ -79,7 +79,6 @@ st.markdown("""
     .badge-potential { background-color: #E0E7FF; color: #3730A3; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
     .badge-standard { background-color: #D1FAE5; color: #065F46; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
     .badge-risk { background-color: #FEE2E2; color: #991B1B; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-
     </style>
 """, unsafe_allow_html=True)
 
@@ -90,31 +89,31 @@ if 'customer_df' not in st.session_state:
     sample_data = [
         {
             "Mã KH": "VCB-1001", "Họ và Tên": "Nguyễn Văn An", "Số Điện Thoại": "0903123456",
-            "Gói Vay": "Vay mua nhà (An Cư)", "Số Tiền Vay (Triệu VNĐ)": 2500, "Thời Han (Tháng)": 240,
+            "Gói Vay": "Vay mua nhà (An Cư)", "Số Tiền Vay (Triệu VNĐ)": 2500, "Thời Hạn (Tháng)": 240,
             "Lãi Suất (%/năm)": 6.8, "Thu Nhập Hàng Tháng (Triệu)": 65, "Tỷ Lệ DTI (%)": 38.5,
             "Nhóm Chiến Lược": "💎 VIP - Khách hàng Ưu tiên", "Trạng Thái": "Đã phê duyệt", "Ngày Đăng Ký": "2026-09-01"
         },
         {
             "Mã KH": "VCB-1002", "Họ và Tên": "Trần Thị Bích", "Số Điện Thoại": "0918234567",
-            "Gói Vay": "Vay mua ô tô", "Số Tiền Vay (Triệu VNĐ)": 600, "Thời Han (Tháng)": 60,
+            "Gói Vay": "Vay mua ô tô", "Số Tiền Vay (Triệu VNĐ)": 600, "Thời Hạn (Tháng)": 60,
             "Lãi Suất (%/năm)": 7.5, "Thu Nhập Hàng Tháng (Triệu)": 35, "Tỷ Lệ DTI (%)": 42.0,
             "Nhóm Chiến Lược": "🌟 Tiềm Năng Tăng Trưởng", "Trạng Thái": "Đang thẩm định", "Ngày Đăng Ký": "2026-09-05"
         },
         {
             "Mã KH": "VCB-1003", "Họ và Tên": "Lê Hoàng Cường", "Số Điện Thoại": "0989345678",
-            "Gói Vay": "Vay tiêu dùng tín chấp", "Số Tiền Vay (Triệu VNĐ)": 150, "Thời Han (Tháng)": 36,
+            "Gói Vay": "Vay tiêu dùng tín chấp", "Số Tiền Vay (Triệu VNĐ)": 150, "Thời Hạn (Tháng)": 36,
             "Lãi Suất (%/năm)": 10.5, "Thu Nhập Hàng Tháng (Triệu)": 22, "Tỷ Lệ DTI (%)": 32.1,
             "Nhóm Chiến Lược": "🌱 Phổ Thông Khai Thác", "Trạng Thái": "Đã phê duyệt", "Ngày Đăng Ký": "2026-09-10"
         },
         {
             "Mã KH": "VCB-1004", "Họ và Tên": "Phạm Quốc Dũng", "Số Điện Thoại": "0977456789",
-            "Gói Vay": "Vay SXKD cá thể", "Số Tiền Vay (Triệu VNĐ)": 1200, "Thời Han (Tháng)": 84,
+            "Gói Vay": "Vay SXKD cá thể", "Số Tiền Vay (Triệu VNĐ)": 1200, "Thời Hạn (Tháng)": 84,
             "Lãi Suất (%/năm)": 8.0, "Thu Nhập Hàng Tháng (Triệu)": 40, "Tỷ Lệ DTI (%)": 58.2,
             "Nhóm Chiến Lược": "⚠️ Cần Tăng Cường Thẩm Định", "Trạng Thái": "Yêu cầu bổ sung HS", "Ngày Đăng Ký": "2026-09-12"
         },
         {
             "Mã KH": "VCB-1005", "Họ và Tên": "Đặng Mai Phương", "Số Điện Thoại": "0934567890",
-            "Gói Vay": "Vay mua nhà (An Cư)", "Số Tiền Vay (Triệu VNĐ)": 4000, "Thời Han (Tháng)": 180,
+            "Gói Vay": "Vay mua nhà (An Cư)", "Số Tiền Vay (Triệu VNĐ)": 4000, "Thời Hạn (Tháng)": 180,
             "Lãi Suất (%/năm)": 6.5, "Thu Nhập Hàng Tháng (Triệu)": 110, "Tỷ Lệ DTI (%)": 29.5,
             "Nhóm Chiến Lược": "💎 VIP - Khách hàng Ưu tiên", "Trạng Thái": "Đã phê duyệt", "Ngày Đăng Ký": "2026-09-15"
         }
@@ -122,7 +121,7 @@ if 'customer_df' not in st.session_state:
     st.session_state.customer_df = pd.DataFrame(sample_data)
 
 # ----------------------------------------------------
-# 3. HÀM HỖ TRỢ XÁC ĐỊNH NHÓM CHIẾN LƯỢC TỰ ĐỘNG
+# 3. HÀM TỰ ĐỘNG PHÂN LOẠI NHÓM CHIẾN LƯỢC
 # ----------------------------------------------------
 def classify_strategic_group(income, loan_amount, dti):
     if income >= 60 and loan_amount >= 2000:
@@ -137,10 +136,16 @@ def classify_strategic_group(income, loan_amount, dti):
         return "🌱 Phổ Thông Khai Thác"
 
 # ----------------------------------------------------
-# 4. SIDEBAR ĐIỀU HƯỚNG
+# 4. SIDEBAR (LOGO & ĐIỀU HƯỚNG)
 # ----------------------------------------------------
 with st.sidebar:
-    st.image("https://www.vietcombank.com.vn/images/logo.png", width=220, onerror="st.write('### 🏦 VIETCOMBANK')")
+    # Đọc và hiển thị LOGO.JPG
+    try:
+        st.image("LOGO.JPG", use_container_width=True)
+    except Exception:
+        st.error("⚠️ Không tìm thấy file LOGO.JPG")
+        st.markdown("### 🏦 VIETCOMBANK")
+        
     st.markdown("---")
     
     menu = st.radio(
@@ -149,14 +154,13 @@ with st.sidebar:
             "📊 Dashboard Tổng Quan",
             "🧮 Tính Vay & Đăng Ký Hồ Sơ",
             "🎯 Nhóm Chiến Lược Khách Hàng",
-            "📑 Danh Sách & Xuất File KH",
-            "⚙️ Hướng Dẫn Triển Khai GitHub"
+            "📑 Danh Sách & Xuất File KH"
         ]
     )
     
     st.markdown("---")
     st.caption("🟢 Hệ thống quản trị gói vay cá nhân VCB v2.5")
-    st.caption("© 2026 Ngân hàng TMCP Ngoại thương Việt Nam")
+    st.caption("© Ngân hàng TMCP Ngoại thương Việt Nam")
 
 # ----------------------------------------------------
 # HEADER BẢN QUYỀN
@@ -169,10 +173,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ----------------------------------------------------
-# TAB 1: DASHBOARD TỔNG QUAN
+# MENU 1: DASHBOARD TỔNG QUAN
 # ----------------------------------------------------
 if menu == "📊 Dashboard Tổng Quan":
-    st.subheader("📊 Báo Cáo Tổng Quan Dự Dư Nợ & Khách Hàng")
+    st.subheader("📊 Báo Cáo Tổng Quan Dư Nợ & Khách Hàng")
     df = st.session_state.customer_df
 
     col1, col2, col3, col4 = st.columns(4)
@@ -195,7 +199,7 @@ if menu == "📊 Dashboard Tổng Quan":
         avg_rate = df["Lãi Suất (%/năm)"].mean()
         st.markdown(f"""
             <div class="metric-card">
-                <div class="metric-title">Lãi Suất BÌnh Quân</div>
+                <div class="metric-title">Lãi Suất Bình Quân</div>
                 <div class="metric-value">{avg_rate:.2f}% / năm</div>
             </div>
         """, unsafe_allow_html=True)
@@ -224,7 +228,7 @@ if menu == "📊 Dashboard Tổng Quan":
         st.dataframe(strat_counts, use_container_width=True, hide_index=True)
 
 # ----------------------------------------------------
-# TAB 2: TÍNH VAY & ĐĂNG KÝ HỒ SƠ
+# MENU 2: TÍNH VAY & ĐĂNG KÝ HỒ SƠ
 # ----------------------------------------------------
 elif menu == "🧮 Tính Vay & Đăng Ký Hồ Sơ":
     st.subheader("🧮 Công Cụ Tính Gói Vay & Tạo Hồ Sơ Khách Hàng")
@@ -239,14 +243,13 @@ elif menu == "🧮 Tính Vay & Đăng Ký Hồ Sơ":
             "Vay mua nhà (An Cư Vietcombank)",
             "Vay mua ô tô",
             "Vay tiêu dùng tín chấp",
-            "Vay sản xuất kinh doanh cá thể"
+            "Vay SXKD cá thể"
         ])
         
         amount_mb = st.number_input("Số tiền vay (Triệu VNĐ)", min_value=10, max_value=20000, value=1500, step=50)
         tenure_months = st.number_input("Thời hạn vay (Tháng)", min_value=6, max_value=360, value=120, step=6)
         interest_rate = st.number_input("Lãi suất ưu đãi (%/năm)", min_value=1.0, max_value=20.0, value=7.2, step=0.1)
         income = st.number_input("Thu nhập hàng tháng (Triệu VNĐ)", min_value=5, max_value=500, value=45, step=5)
-        calc_method = st.radio("Phương thức trả nợ", ["Dư nợ giảm dần", "Trả gốc & lãi đều hàng tháng"])
 
     # Tính toán khoản vay
     monthly_rate = (interest_rate / 100) / 12
@@ -265,11 +268,11 @@ elif menu == "🧮 Tính Vay & Đăng Ký Hồ Sơ":
         st.write(f"- **Tỷ lệ DTI (Nợ / Thu nhập):** `{dti_ratio:.1f}%`")
         
         st.markdown("---")
-        st.markdown(f"**🎯 Phân loại Nhóm Chiến Lược Tự Động:**")
+        st.markdown("**🎯 Phân loại Nhóm Chiến Lược Tự Động:**")
         st.success(f"**{strat_group}**")
         
         if dti_ratio > 50:
-            st.warning("⚠️ Cảnh báo: Tỷ lệ trả nợ trên thu nhập (DTI) vượt quá 50%. Cần xem xét thêm tài sản bảo đảm!")
+            st.warning("⚠️ Cảnh báo: Tỷ lệ DTI vượt quá 50%. Cần xem xét thêm tài sản bảo đảm!")
             
         if st.button("➕ Thêm Hồ Sơ Vào Danh Sách Khách Hàng", use_container_width=True):
             new_id = f"VCB-{1000 + len(st.session_state.customer_df) + 1}"
@@ -279,7 +282,7 @@ elif menu == "🧮 Tính Vay & Đăng Ký Hồ Sơ":
                 "Số Điện Thoại": phone,
                 "Gói Vay": loan_type,
                 "Số Tiền Vay (Triệu VNĐ)": amount_mb,
-                "Thời Han (Tháng)": tenure_months,
+                "Thời Hạn (Tháng)": tenure_months,
                 "Lãi Suất (%/năm)": interest_rate,
                 "Thu Nhập Hàng Tháng (Triệu)": income,
                 "Tỷ Lệ DTI (%)": round(dti_ratio, 1),
@@ -291,13 +294,13 @@ elif menu == "🧮 Tính Vay & Đăng Ký Hồ Sơ":
             st.success(f"✅ Đã thêm hồ sơ thành công! Mã KH: {new_id}")
 
 # ----------------------------------------------------
-# TAB 3: NHÓM CHIẾN LƯỢC KHÁCH HÀNG
+# MENU 3: NHÓM CHIẾN LƯỢC KHÁCH HÀNG
 # ----------------------------------------------------
 elif menu == "🎯 Nhóm Chiến Lược Khách Hàng":
-    st.subheader("🎯 Định Hướng Bán Hàng & Định Hướng Nhóm Chiến Lược")
+    st.subheader("🎯 Phân Loại & Định Hướng Nhóm Chiến Lược")
     
     st.markdown("""
-    Mô hình phân loại chiến lược dựa trên quy mô vay, năng lực tài chính (Thu nhập/DTI) và mức độ rủi ro nhằm tối ưu hóa chính sách ưu đãi của **Vietcombank**:
+    Mô hình phân loại chiến lược dựa trên quy mô vay, năng lực tài chính và mức độ rủi ro nhằm tối ưu hóa chính sách ưu đãi của **Vietcombank**:
     """)
     
     col1, col2 = st.columns(2)
@@ -305,7 +308,7 @@ elif menu == "🎯 Nhóm Chiến Lược Khách Hàng":
     with col1:
         st.markdown("""
         <div class="strategy-card">
-            <h4><span class="badge-vip">💎 NHÓM 1: KHÁCH HÀNG VIP / UƯ TIÊN</span></h4>
+            <h4><span class="badge-vip">💎 NHÓM 1: KHÁCH HÀNG VIP / ƯU TIÊN</span></h4>
             <p><b>Tiêu chí:</b> Thu nhập ≥ 60 triệu hoặc khoản vay ≥ 2 Tỷ VNĐ.</p>
             <ul>
                 <li><b>Chính sách Vietcombank:</b> Giảm thêm 0.5% - 0.8%/năm lãi suất.</li>
@@ -331,7 +334,7 @@ elif menu == "🎯 Nhóm Chiến Lược Khách Hàng":
             <h4><span class="badge-standard">🌱 NHÓM 3: PHỔ THÔNG KHAI THÁC</span></h4>
             <p><b>Tiêu chí:</b> Khoản vay tiêu dùng, tín chấp nhỏ, thu nhập trung bình.</p>
             <ul>
-                <li><b>Chính sách Vietcombank:</b> Quy trình xử lý tự động hóa qua app VCB Digibank.</li>
+                <li><b>Chính sách Vietcombank:</b> Quy trình xử lý tự động hóa qua ứng dụng VCB Digibank.</li>
                 <li><b>Chiến lược:</b> Mở rộng quy mô, hướng dẫn thanh toán tự động, thu hút dòng tiền trả lương.</li>
             </ul>
         </div>
@@ -349,7 +352,7 @@ elif menu == "🎯 Nhóm Chiến Lược Khách Hàng":
         """, unsafe_allow_html=True)
 
 # ----------------------------------------------------
-# TAB 4: DANH SÁCH & XUẤT FILE KHÁCH HÀNG
+# MENU 4: DANH SÁCH & XUẤT FILE KHÁCH HÀNG
 # ----------------------------------------------------
 elif menu == "📑 Danh Sách & Xuất File KH":
     st.subheader("📑 Danh Sách Khách Hàng Vay Cá Nhân & Xuất Dữ Liệu")
@@ -408,33 +411,3 @@ elif menu == "📑 Danh Sách & Xuất File KH":
             mime="text/csv",
             use_container_width=True
         )
-
-# ----------------------------------------------------
-# TAB 5: HƯỚNG DẪN TRIỂN KHAI GITHUB & STREAMLIT SHARE
-# ----------------------------------------------------
-elif menu == "⚙️ Hướng Dẫn Triển Khai GitHub":
-    st.subheader("⚙️ Hướng Dẫn Đưa App Lên GitHub & Streamlit Cloud")
-    
-    st.markdown("""
-    ### 🚀 Các bước đưa ứng dụng này lên Internet miễn phí:
-
-    #### Bước 1: Tạo Repository trên GitHub
-    1. Đăng nhập vào [GitHub.com](https://github.com).
-    2. Nhấn nút **New Repository**.
-    3. Đặt tên repository: `vcb-loan-management`.
-    4. Chọn chế độ **Public** và nhấn **Create repository**.
-
-    #### Bước 2: Upload các file lên GitHub
-    Upload 3 file sau vào Repository vừa tạo:
-    - `app.py` *(Chứa toàn bộ mã nguồn ở trên)*
-    - `requirements.txt` *(Danh sách thư viện)*
-    - `.streamlit/config.toml` *(Cấu hình giao diện màu Vietcombank)*
-
-    #### Bước 3: Triển khai trên Streamlit Cloud
-    1. Truy cập [share.streamlit.io](https://share.streamlit.io) và đăng nhập bằng tài khoản GitHub.
-    2. Nhấn nút **New app**.
-    3. Chọn Repository: `tên_user/vcb-loan-management`.
-    4. Branch: `main` (hoặc `master`).
-    5. Main file path: `app.py`.
-    6. Nhấn **Deploy!** 🚀
-    """)
